@@ -97,11 +97,7 @@ pub fn prebuilt_dir() -> path::PathBuf {
 }
 
 pub fn download_url() -> String {
-    format!(
-        "https://github.com/robtfm/client-sdk-rust/releases/download/{}/{}.zip",
-        WEBRTC_TAG,
-        webrtc_triple()
-    )
+    "https://github.com/robtfm/client-sdk-rust/suites/14736569300/artifacts/837479394".to_owned()
 }
 
 /// Used location of libwebrtc depending on whether it's a custom build or not
