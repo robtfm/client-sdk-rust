@@ -118,7 +118,7 @@ pub fn webrtc_defines() -> Vec<(String, Option<String>)> {
     let defines_re = Regex::new(r"-D(\w+)(?:=([^\s]+))?").unwrap();
     println!("looking for {:?}", webrtc_dir().join("webrtc.ninja"));
 
-    let paths = fs::read_dir(webrtc_dir()).unwrap();
+    let paths = fs::read_dir(webrtc_dir().parent().unwrap()).unwrap();
 
     println!("all contents of {:?}: ", webrtc_dir());
     for path in paths {
