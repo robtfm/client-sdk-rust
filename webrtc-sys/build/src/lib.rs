@@ -242,9 +242,9 @@ pub fn download_webrtc() -> Result<(), Box<dyn Error>> {
     let file = fs::File::open(tmp_dir)?;
 
     let mut archive = zip::ZipArchive::new(file)?;
-    archive.extract(webrtc_dir.parent().unwrap())?;
+    archive.extract(&webrtc_dir)?;
 
-    println!("extracted to {:?}", webrtc_dir.parent());
+    println!("extracted to {:?}", webrtc_dir);
 
     Ok(())
 }
