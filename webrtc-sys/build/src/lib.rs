@@ -116,6 +116,15 @@ pub fn webrtc_dir() -> path::PathBuf {
 pub fn webrtc_defines() -> Vec<(String, Option<String>)> {
     // read preprocessor definitions from webrtc.ninja
     let defines_re = Regex::new(r"-D(\w+)(?:=([^\s]+))?").unwrap();
+    println!("looking for {:?}", webrtc_dir().join("webrtc.ninja"));
+
+    let paths = fs::read_dir(webrtc_dir()).unwrap();
+
+    println!("all contents of {:?}: ", webrtc_dir());
+    for path in paths {
+        println!("Name: {}", path.unwrap().path().display())
+    }
+
     let webrtc_gni = fs::File::open(webrtc_dir().join("webrtc.ninja")).unwrap();
 
     let mut defines_line = String::default();
@@ -225,6 +234,8 @@ pub fn download_webrtc() -> Result<(), Box<dyn Error>> {
 
     let mut archive = zip::ZipArchive::new(file)?;
     archive.extract(webrtc_dir.parent().unwrap())?;
+
+    println!("extracted to {:?}", webrtc_dir.parent());
 
     Ok(())
 }
