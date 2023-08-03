@@ -118,7 +118,16 @@ pub fn webrtc_defines() -> Vec<(String, Option<String>)> {
     let defines_re = Regex::new(r"-D(\w+)(?:=([^\s]+))?").unwrap();
     println!("looking for {:?}", webrtc_dir().join("webrtc.ninja"));
 
-    let paths = fs::read_dir(webrtc_dir().parent().unwrap()).unwrap();
+    let wdir = webrtc_dir();
+    let Some(parent) = wdir.parent() else {
+        println!("no parent for {:?}", webrtc_dir());
+        panic!();
+    };
+
+    let Ok(paths) = fs::read_dir(parent) else {
+        println!("parent doesn't exist? {:?}", parent);
+        panic!();
+    };
 
     println!("all contents of {:?}: ", webrtc_dir());
     for path in paths {
