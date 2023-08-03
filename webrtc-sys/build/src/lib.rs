@@ -25,7 +25,7 @@ use fs2::FileExt;
 use regex::Regex;
 use reqwest::StatusCode;
 
-pub const SCRATH_PATH: &str = "livekit_webrtc";
+pub const SCRATH_PATH: &str = "lkdl";
 pub const WEBRTC_TAG: &str = "webrtc-d5ec6fa";
 pub const IGNORE_DEFINES: [&str; 2] = ["CR_CLANG_REVISION", "CR_XCODE_VERSION"];
 
@@ -87,7 +87,7 @@ pub fn custom_dir() -> Option<path::PathBuf> {
 /// without dependencies constraints
 /// This also has the benefit of not re-downloading the binaries for each crate
 pub fn prebuilt_dir() -> path::PathBuf {
-    let target_dir = scratch::path(SCRATH_PATH);
+    let target_dir = scratch_path(SCRATH_PATH);
     path::Path::new(&target_dir).join(format!(
         "livekit/{}-{}/{}",
         webrtc_triple(),
@@ -97,7 +97,11 @@ pub fn prebuilt_dir() -> path::PathBuf {
 }
 
 pub fn download_url() -> String {
-    "https://github.com/robtfm/client-sdk-rust/suites/14736569300/artifacts/837479394".to_owned()
+    format!(
+        "https://github.com/robtfm/client-sdk-rust/releases/download/{}/{}.zip",
+        WEBRTC_TAG,
+        webrtc_triple()
+    )
 }
 
 /// Used location of libwebrtc depending on whether it's a custom build or not
@@ -182,8 +186,19 @@ pub fn configure_jni_symbols() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+pub fn scratch_path(suffix: &str) -> path::PathBuf {
+    match target_os().as_str() {
+        "win" => {
+            let p = path::Path::new("c:\\tmp").join(suffix);
+            let _ = fs::create_dir(&p);
+            p.into()        
+        },
+        _ => scratch::path(suffix),
+    }
+}
+
 pub fn download_webrtc() -> Result<(), Box<dyn Error>> {
-    let dir = scratch::path(SCRATH_PATH);
+    let dir = scratch_path(SCRATH_PATH);
     let flock = File::create(dir.join(".lock"))?;
     flock.lock_exclusive()?;
 
