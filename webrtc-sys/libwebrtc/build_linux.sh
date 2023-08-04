@@ -100,6 +100,8 @@ args="is_debug=$debug  \
   enable_iterator_debugging=false \
   use_rtti=true \
   rtc_use_x11=false \
+  rtc_build_ssl=false \
+  rtc_ssl_root=\"/usr/include\" \
   use_cxx17=true"
 
 if [ "$debug" = "true" ]; then
