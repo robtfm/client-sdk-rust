@@ -207,7 +207,7 @@ pub fn configure_jni_symbols() -> Result<(), Box<dyn Error>> {
 pub fn scratch_path(suffix: &str) -> path::PathBuf {
     match target_os().as_str() {
         "win" => {
-            let p = path::Path::new("c:\\tmp").join(suffix);
+            let p = path::Path::new(suffix);
             let _ = fs::create_dir(&p);
             p.into()        
         },
