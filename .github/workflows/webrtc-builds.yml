@@ -137,16 +137,15 @@ jobs:
       - name: Zip artifact (Unix)
         if: ${{ matrix.target.os != 'windows-latest' }}
         run: |
-          cd webrtc-sys/libwebrtc/${{ steps.setup.outputs.OUT }}
-          zip ${{ github.workspace }}/${{ steps.setup.outputs.ZIP }} ./* -r
+          cd webrtc-sys/libwebrtc
+          zip ${{ github.workspace }}/${{ steps.setup.outputs.ZIP }} ${{ steps.setup.outputs.OUT }} -r
 
       - name: Zip artifact (Windows)
         if: ${{ matrix.target.os == 'windows-latest' }}
-        run: Compress-Archive -Path .\webrtc-sys\libwebrtc\${{ steps.setup.outputs.OUT }}\* -DestinationPath ${{ steps.setup.outputs.ZIP }}
+        run: Compress-Archive -Path .\webrtc-sys\libwebrtc\${{ steps.setup.outputs.OUT }} -DestinationPath ${{ steps.setup.outputs.ZIP }}
 
-      # doublezip here but I don't think there is an alternative
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.setup.outputs.ZIP }}
+          name: webrtc-builds
           path: ${{ steps.setup.outputs.ZIP }}
