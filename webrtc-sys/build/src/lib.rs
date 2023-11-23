@@ -26,7 +26,7 @@ use regex::Regex;
 use reqwest::StatusCode;
 
 pub const SCRATH_PATH: &str = "lkdl";
-pub const WEBRTC_TAG: &str = "webrtc-22112023";
+pub const WEBRTC_TAG: &str = "webrtc-d5ec6fa";
 pub const IGNORE_DEFINES: [&str; 2] = ["CR_CLANG_REVISION", "CR_XCODE_VERSION"];
 
 pub fn target_os() -> String {
