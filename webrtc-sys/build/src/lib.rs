@@ -26,8 +26,14 @@ use regex::Regex;
 use reqwest::StatusCode;
 
 pub const SCRATH_PATH: &str = "livekit_webrtc";
-pub const WEBRTC_TAG: &str = "webrtc-d5afc4b";
+pub const WEBRTC_TAG: &str = "webrtc-576e2f4a";
 pub const IGNORE_DEFINES: [&str; 2] = ["CR_CLANG_REVISION", "CR_XCODE_VERSION"];
+
+pub fn scratch_path(suffix: &str) -> path::PathBuf {
+    let p = path::Path::new(suffix);
+    let _ = fs::create_dir(&p);
+    p.into()        
+}
 
 pub fn target_os() -> String {
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
@@ -98,7 +104,7 @@ pub fn prebuilt_dir() -> path::PathBuf {
 
 pub fn download_url() -> String {
     format!(
-        "https://github.com/livekit/client-sdk-rust/releases/download/{}/{}.zip",
+        "https://github.com/robtfm/client-sdk-rust/releases/download/{}/{}.zip",
         WEBRTC_TAG,
         format!("webrtc-{}", webrtc_triple())
     )
@@ -187,7 +193,7 @@ pub fn configure_jni_symbols() -> Result<(), Box<dyn Error>> {
 }
 
 pub fn download_webrtc() -> Result<(), Box<dyn Error>> {
-    let dir = scratch::path(SCRATH_PATH);
+    let dir = scratch_path(SCRATH_PATH);
     let flock = File::create(dir.join(".lock"))?;
     flock.lock_exclusive()?;
 
