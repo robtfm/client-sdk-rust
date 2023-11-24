@@ -98,10 +98,12 @@ gn gen "$OUTPUT_DIR" --root="src" \
   rtc_enable_objc_symbol_export=false \
   enable_libaom = true \
   rtc_include_dav1d_in_internal_decoder_factory = true \
-  rtc_use_h264=true \
+  rtc_use_h264=false \
   use_custom_libcxx=false \
   clang_use_chrome_plugins=false \
   use_rtti=true \
+  rtc_build_ssl=false \
+  rtc_ssl_root=\"/usr/include\"
   use_lld=false"
 
 # build static library

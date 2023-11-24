@@ -100,9 +100,9 @@ args="is_debug=$debug  \
   symbol_level=0 \
   enable_iterator_debugging=false \
   use_rtti=true \
-  rtc_use_x11=false" \
   rtc_build_ssl=false \
   rtc_ssl_root=\"/usr/include\"
+  rtc_use_x11=false"
 
 if [ "$debug" = "true" ]; then
   args="${args} is_asan=true is_lsan=true";
