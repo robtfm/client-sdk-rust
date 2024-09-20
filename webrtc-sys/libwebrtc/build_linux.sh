@@ -96,7 +96,9 @@ args="is_debug=$debug  \
   enable_stripping=true \
   use_goma=false \
   ffmpeg_branding=\"Chrome\" \
-  rtc_use_h264=true \
+  rtc_use_h264=false \
+  rtc_build_ssl=false \
+  rtc_ssl_root=\"/usr/include\" \
   rtc_use_pipewire=false \
   symbol_level=0 \
   enable_iterator_debugging=false \
