@@ -46,42 +46,14 @@ jobs:
             arch: arm64
 
           - name: linux 
-            os: buildjet-8vcpu-ubuntu-2004
+            os: ubuntu-20.04
             cmd: ./build_linux.sh
             arch: x64
 
           - name: linux
-            os: buildjet-8vcpu-ubuntu-2004
+            os: ubuntu-20.04
             cmd: ./build_linux.sh
             arch: arm64 
-          
-          - name: android
-            os: buildjet-8vcpu-ubuntu-2004
-            cmd: ./build_android.sh
-            arch: arm64
-
-          - name: android
-            os: buildjet-8vcpu-ubuntu-2004
-            cmd: ./build_android.sh
-            arch: arm
-
-          - name: android
-            os: buildjet-8vcpu-ubuntu-2004
-            cmd: ./build_android.sh
-            arch: x64
-
-          - name: ios
-            out: ios-device-arm64
-            os: macos-13
-            cmd: ./build_ios.sh
-            arch: arm64
-
-          - name: ios
-            out: ios-simulator-arm64
-            os: macos-13
-            cmd: ./build_ios.sh
-            arch: arm64
-            buildargs: --environment simulator 
         profile:
           - release
 #          - debug
@@ -163,7 +135,6 @@ jobs:
     needs: build
     permissions:
       contents: write
-    if: startsWith(github.ref, 'refs/tags/webrtc-')
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
