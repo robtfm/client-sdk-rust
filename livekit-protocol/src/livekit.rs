@@ -600,7 +600,7 @@ pub struct DisabledCodecs {
     #[prost(message, repeated, tag="2")]
     pub publish: ::prost::alloc::vec::Vec<Codec>,
 }
-#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RtpDrift {
     #[prost(message, optional, tag="1")]
     pub start_time: ::core::option::Option<::pbjson_types::Timestamp>,
