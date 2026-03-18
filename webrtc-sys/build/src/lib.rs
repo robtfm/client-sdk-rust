@@ -26,8 +26,18 @@ use regex::Regex;
 use reqwest::StatusCode;
 
 pub const SCRATH_PATH: &str = "livekit_webrtc";
-pub const WEBRTC_TAG: &str = "h264-true-prefixed";
 pub const IGNORE_DEFINES: [&str; 2] = ["CR_CLANG_REVISION", "CR_XCODE_VERSION"];
+
+/// macOS uses VideoToolbox for H.264 decoding; enabling the bundled H.264
+/// software decoder (`rtc_use_h264=true`) breaks it. Other platforms need the
+/// software decoder so they use the `h264-true-prefixed` (symbol-remapped) build.
+pub fn webrtc_tag() -> &'static str {
+    if target_os() == "mac" {
+        "0.6-h264-false-2"
+    } else {
+        "h264-true-prefixed"
+    }
+}
 
 pub fn target_os() -> String {
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
@@ -91,16 +101,16 @@ pub fn prebuilt_dir() -> path::PathBuf {
     path::Path::new(&target_dir).join(format!(
         "livekit/{}-{}/{}",
         webrtc_triple(),
-        WEBRTC_TAG,
+        webrtc_tag(),
         webrtc_triple()
     ))
 }
 
 pub fn download_url() -> String {
     format!(
-        "https://github.com/robtfm/client-sdk-rust/releases/download/{}/{}.zip",
-        WEBRTC_TAG,
-        format!("webrtc-{}", webrtc_triple())
+        "https://github.com/robtfm/client-sdk-rust/releases/download/{}/webrtc-{}.zip",
+        webrtc_tag(),
+        webrtc_triple()
     )
 }
 
