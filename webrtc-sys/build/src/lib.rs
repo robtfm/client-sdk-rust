@@ -29,6 +29,9 @@ use reqwest::StatusCode;
 
 pub const SCRATH_PATH: &str = "livekit_webrtc";
 pub const WEBRTC_TAG: &str = "webrtc-a545de4-prefixed";
+/// Directory the prebuilts are extracted under: short, so the abseil headers below it
+/// stay inside the Windows MAX_PATH limit from a typical cargo target directory.
+const WEBRTC_DIR: &str = "a545de4p";
 pub const IGNORE_DEFINES: [&str; 2] = ["CR_CLANG_REVISION", "CR_XCODE_VERSION"];
 
 pub fn target_os() -> String {
@@ -93,7 +96,7 @@ pub fn prebuilt_dir() -> path::PathBuf {
     path::Path::new(&target_dir).join(format!(
         "livekit/{}-{}/{}",
         webrtc_triple(),
-        WEBRTC_TAG,
+        WEBRTC_DIR,
         webrtc_triple()
     ))
 }
