@@ -1,0 +1,56 @@
+# Post-processes an upstream livekit/rust-sdks libwebrtc release into the archives
+# webrtc-sys-build downloads from this fork: the bundled ffmpeg and BoringSSL symbol families
+# get a `webrtc_` prefix on every desktop platform, so they cannot shadow the ffmpeg/OpenSSL an
+# application links itself (upstream only prefixes Linux). Once the release exists, point
+# WEBRTC_TAG and WEBRTC_DIR in webrtc-sys/build/src/lib.rs at it.
+name: Prefixed libwebrtc prebuilts
+
+on:
+  workflow_dispatch:
+    inputs:
+      upstream_tag:
+        description: "Upstream livekit/rust-sdks webrtc release tag, e.g. webrtc-a545de4"
+        required: true
+      release_tag:
+        description: "Release tag on this fork (default: <upstream_tag>-prefixed)"
+        required: false
+
+jobs:
+  prefix:
+    name: Prefix and release
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      LLVM_BIN: /usr/lib/llvm-21/bin
+      UPSTREAM_TAG: ${{ inputs.upstream_tag }}
+      RELEASE_TAG: ${{ inputs.release_tag || format('{0}-prefixed', inputs.upstream_tag) }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Install LLVM 21
+        run: |
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/apt.llvm.org.gpg
+          echo "deb [signed-by=/usr/share/keyrings/apt.llvm.org.gpg] http://apt.llvm.org/noble/ llvm-toolchain-noble-21 main" | sudo tee /etc/apt/sources.list.d/llvm.list
+          sudo apt-get update
+          sudo apt-get install -y llvm-21
+          "$LLVM_BIN/llvm-objcopy" --version
+
+      - name: Prefix the upstream archives
+        run: webrtc-sys/libwebrtc/prefix/make-prefixed-prebuilts.sh "$UPSTREAM_TAG" "$RUNNER_TEMP/prefixed"
+
+      - name: Write release notes
+        run: |
+          {
+            echo "Upstream [livekit/rust-sdks \`$UPSTREAM_TAG\`](https://github.com/livekit/rust-sdks/releases/tag/$UPSTREAM_TAG) desktop prebuilts with the bundled ffmpeg and BoringSSL symbol families renamed with a \`webrtc_\` prefix, by \`webrtc-sys/libwebrtc/prefix\` at $GITHUB_SHA."
+            echo
+            cat "$RUNNER_TEMP/prefixed/summary.md"
+          } > "$RUNNER_TEMP/notes.md"
+          cat "$RUNNER_TEMP/notes.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Create the release
+        run: |
+          gh release create "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title "$RELEASE_TAG" --notes-file "$RUNNER_TEMP/notes.md" \
+            "$RUNNER_TEMP"/prefixed/release/*.zip
